@@ -117,12 +117,9 @@
         data.forEach((row, index) => {
           const date = new Date(row.created_at).toLocaleString();
           const destination = `${row.area_name || ''}${row.area_name && row.country_name ? ', ' : ''}${row.country_name || ''}`;
-           const params = new URLSearchParams({
-    'الوجهة': destination,
-    'الميزانية_الدنيا': row.min_budget ?? '',
-    'الميزانية_القصوى': row.max_budget ?? '',
-    'الجنسية': row.travelers_nationality_name ?? ''
-  });
+
+          const shareLink = `https://alghorfa.net/travel-request/${row.id}?الوجهة=${encodeURIComponent(destination)}&الميزانية_الدنيا=${encodeURIComponent(row.min_budget ?? '')}&الميزانية_القصوى=${encodeURIComponent(row.max_budget ?? '')}&الجنسية=${encodeURIComponent(row.travelers_nationality_name ?? '')}`;
+
           html += `
             <tr>
               <td>${index + 1}</td>
@@ -133,13 +130,20 @@
               <td>${row.travelers_nationality_name || '-'}</td>
               <td>${row.min_budget || '0'}</td>
               <td>${row.max_budget || '0'}</td>
-              <td><button onclick="navigator.clipboard.writeText('https://alghorfa.net/travel-request/${row.id}?${params.toString()')">Copy Link</button></td>
+              <td><button data-link="${shareLink}" class="copy-btn">Copy Link</button></td>
             </tr>
           `;
         });
 
         html += '</tbody></table>';
         content.innerHTML = html;
+
+        // Attach copy handlers after the table is in the DOM
+        content.querySelectorAll('.copy-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            navigator.clipboard.writeText(btn.dataset.link);
+          });
+        });
 
       } catch (err) {
         content.innerHTML = `<div class="error">Error loading data: ${err.message}</div>`;
