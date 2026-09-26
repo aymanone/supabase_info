@@ -81,6 +81,16 @@
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    window.copyShareText = async function(index) {
+      const text = window.shareTexts[index];
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (err) {
+        alert('Could not copy automatically. Please copy manually:\n\n' + text);
+      }
+    };
+
     async function loadData() {
       const content = document.getElementById('content');
       
@@ -114,11 +124,19 @@
             <tbody>
         `;
 
+        window.shareTexts = [];
+
         data.forEach((row, index) => {
           const date = new Date(row.created_at).toLocaleString();
-          const destination = `${row.area_name || ''}${row.area_name && row.country_name ? ', ' : ''}${row.country_name || ''}`;
+          const requestUrl = `https://alghorfa.net/travel-request/${row.id}`;
 
-          const shareLink = `https://alghorfa.net/travel-request/${row.id}?الوجهة=${encodeURIComponent(destination)}&الميزانية_الدنيا=${encodeURIComponent(row.min_budget ?? '')}&الميزانية_القصوى=${encodeURIComponent(row.max_budget ?? '')}&الجنسية=${encodeURIComponent(row.travelers_nationality_name ?? '')}`;
+          const simpleText = `Travel Request: ${row.country_name || '-'}, ${row.area_name || '-'}
+Nationality: ${row.travelers_nationality_name || '-'}
+Budget: $${row.min_budget || '-'} - $${row.max_budget || '-'}
+
+${requestUrl}`;
+
+          window.shareTexts[index] = simpleText;
 
           html += `
             <tr>
@@ -128,22 +146,15 @@
               <td>${row.area_name || '-'}</td>
                <td>${row.offers_number || 'No Offers'}</td>
               <td>${row.travelers_nationality_name || '-'}</td>
-              <td>${row.min_budget || '0'}</td>
-              <td>${row.max_budget || '0'}</td>
-              <td><button data-link="${shareLink}" class="copy-btn">Copy Link</button></td>
+              <td>${row.min_budget || '-'}</td>
+              <td>${row.max_budget || '-'}</td>
+              <td><button onclick="copyShareText(${index})">Copy Link</button></td>
             </tr>
           `;
         });
 
         html += '</tbody></table>';
         content.innerHTML = html;
-
-        // Attach copy handlers after the table is in the DOM
-        content.querySelectorAll('.copy-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            navigator.clipboard.writeText(btn.dataset.link);
-          });
-        });
 
       } catch (err) {
         content.innerHTML = `<div class="error">Error loading data: ${err.message}</div>`;
