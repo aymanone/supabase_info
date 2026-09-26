@@ -81,4 +81,65 @@
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function
+    async function loadData() {
+      const content = document.getElementById('content');
+      
+      try {
+        const { data, error } = await supabase.rpc('get_travel_requests');
+        
+        if (error) throw error;
+        
+        if (!data || data.length === 0) {
+          content.innerHTML = '<div class="no-data">No travel requests found.</div>';
+          return;
+        }
+
+        const count = data.length;
+        let html = `<div class="count">Total Requests: ${count}</div>`;
+        html += `
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Created At</th>
+                <th>Country</th>
+                <th>Area</th>
+                <th>Offers Number</th>
+                <th>Nationality</th>
+                <th>Min Budget</th>
+                <th>Max Budget</th>
+                <th>Link</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        data.forEach((row, index) => {
+          const date = new Date(row.created_at).toLocaleString();
+          html += `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${date}</td>
+              <td>${row.country_name || '-'}</td>
+              <td>${row.area_name || '-'}</td>
+               <td>${row.offers_number || 'No Offers'}</td>
+              <td>${row.travelers_nationality_name || '-'}</td>
+              <td>${row.min_budget || '-'}</td>
+              <td>${row.max_budget || '-'}</td>
+              <td><button onclick="navigator.clipboard.writeText('https://alghorfa.net/travel-request/${row.id}')">Copy Link</button></td>
+            </tr>
+          `;
+        });
+
+        html += '</tbody></table>';
+        content.innerHTML = html;
+
+      } catch (err) {
+        content.innerHTML = `<div class="error">Error loading data: ${err.message}</div>`;
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
