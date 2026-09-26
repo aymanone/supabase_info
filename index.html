@@ -132,9 +132,9 @@
           const requestUrl = `https://alghorfa.net/travel-request/${row.id}`;
 
           const RLM = '\u200F';
-          const simpleText = `${RLM}طلب سفر: ${row.country_name || '-'}, ${row.area_name || '-'}
+          const simpleText = `${RLM}الوجهة: ${row.country_name || '-'}, ${row.area_name || '-'}
 ${RLM}الجنسية: ${row.travelers_nationality_name || '-'}
-${RLM}الميزانية: ${row.min_budget || '-'} - ${row.max_budget || '-'}
+${RLM}الميزانية: ${row.min_budget || '0'} - ${row.max_budget || '0'}
 
 ${requestUrl}`;
 
