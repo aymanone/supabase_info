@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -130,9 +131,10 @@
           const date = new Date(row.created_at).toLocaleString();
           const requestUrl = `https://alghorfa.net/travel-request/${row.id}`;
 
-          const simpleText = `Travel Request: ${row.country_name || '-'}, ${row.area_name || '-'}
-Nationality: ${row.travelers_nationality_name || '-'}
-Budget: $${row.min_budget || '-'} - $${row.max_budget || '-'}
+          const RLM = '\u200F';
+          const simpleText = `${RLM}طلب سفر: ${row.country_name || '-'}, ${row.area_name || '-'}
+${RLM}الجنسية: ${row.travelers_nationality_name || '-'}
+${RLM}الميزانية: ${row.min_budget || '-'} - ${row.max_budget || '-'}
 
 ${requestUrl}`;
 
