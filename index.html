@@ -124,8 +124,8 @@
               <td>${row.area_name || '-'}</td>
                <td>${row.offers_number || 'No Offers'}</td>
               <td>${row.travelers_nationality_name || '-'}</td>
-              <td>${row.min_budget || '-'}</td>
-              <td>${row.max_budget || '-'}</td>
+              <td>${row.min_budget || '0'}</td>
+              <td>${row.max_budget || '0'}</td>
               <td><button onclick="navigator.clipboard.writeText('https://alghorfa.net/travel-request/${row.id}')">Copy Link</button></td>
             </tr>
           `;
